@@ -21,9 +21,11 @@ poisson_reg() |>
       data = us_deaths)
 
 ## ----glm-rec-error, error = TRUE----------------------------------------------
+try({
 mod <- poisson_reg() |> set_engine("glm")
 rec <- recipe(deaths ~ gender + age_group + year + offset(log_pop), 
               data = us_deaths)
+})
 
 ## ----glm-rec-fix--------------------------------------------------------------
 rec <- recipe(deaths ~ gender + age_group + year + log_pop, 
@@ -74,6 +76,7 @@ workflow() |>
   tidy()
 
 ## ----resamples-glmnet-problem, error=TRUE-------------------------------------
+try({
 resamples <- bootstraps(us_deaths, times = 5)
 
 mod_glmnet <- poisson_reg(penalty = 1E-5) |> 
@@ -84,6 +87,7 @@ workflow() |>
   add_model(mod_glmnet) |>
   fit_resamples(resamples) |>
   collect_metrics()
+})
 
 ## -----------------------------------------------------------------------------
 show_notes(.Last.tune.result)
